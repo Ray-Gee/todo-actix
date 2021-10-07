@@ -1,24 +1,31 @@
-use actix_web::{get, web, App, HttpServer, Responder};
-use std::io;
+mod models;
+mod config;
 
-// #[get("/{id}/{name}/index.html")]
-// async fn index(web::Path((id, name)): web::Path<(u32, String)>) -> impl Responder {
-//     format!("Hello {}! id:{}", name, id)
-// }
+use crate::models::Status;
+use actix_web::{web, App, HttpServer, Responder};
+use std::io;
+use dotenv::dotenv;
+use tokio_postgres::NoTLS;
 
 async fn status() -> impl Responder { 
-    "{\"status\": \"UP\"}"
+    web::HttpResponse::Ok().json(Status {status: "ok".to_string()})
 }
 
 #[actix_web::main]
-async fn main() -> std::io::Result<()> {
+async fn main() -> io::Result<()> {
 
-    println!("Starting server at http://localhost:8080/");
+    dotenv().ok();
+
+    let config = crate::config::Config::from_env().unwrap();
+
+    let pool = config.pg.create_pool(NoTLS).unwrap();
+
+    println!("Starting server at http://{}:{}/", config.server.host, config.server.port);
     
-    HttpServer::new(|| {
-        App::new().route("/", web::get().to(status))
+    HttpServer::new(move|| {
+        App::new().data(pool.clone()).route("/", web::get().to(status))
     })
-    .bind("127.0.0.1:8080")?
+    .bind(format!("{}:{}", config.server.host, config.server.port))?
     .run()
     .await
 }
