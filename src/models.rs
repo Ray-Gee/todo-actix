@@ -1,8 +1,6 @@
 use serde::{Serialize, Deserialize};
 use tokio_pg_mapper_derive::PostgresMapper;
 
-use serde::Serialize;
-
 #[derive(Serialize)]
 pub struct Status {
     pub status: String
@@ -21,5 +19,10 @@ pub struct TodoItem {
     pub id: i32,
     pub title: String,
     pub checked: bool,
-    pub list_id i32,
+    pub list_id: i32,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct CreateTodoList {
+    pub title: String,
 }
