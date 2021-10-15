@@ -15,7 +15,7 @@ async fn status() -> impl Responder {
         .json(Status { status: "UP".to_string()})
 }
 
-#[actix_web::main]
+#[actix_rt::main]
 async fn main() -> io::Result<()> {
 
     dotenv().ok();

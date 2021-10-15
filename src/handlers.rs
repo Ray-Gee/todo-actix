@@ -3,14 +3,14 @@ use crate::db;
 use deadpool_postgres::{Pool, Client};
 use actix_web::{web, Responder, HttpResponse};
 
-pub async fn status() -> impl Responder { 
-    web::HttpResponse::Ok().json(Status {status: "ok".to_string()})
-}
+// pub async fn status() -> impl Responder { 
+//     web::HttpResponse::Ok().json(Status {status: "ok".to_string()})
+// }
 
 pub async fn get_todos(db_pool: web::Data<Pool>) -> impl Responder {
 
     let client: Client = db_pool.get().await.expect("Error connecting to the database");
-
+    // dbg!(&client);
     let result = db::get_todos(&client).await;
 
     match result {
@@ -19,11 +19,11 @@ pub async fn get_todos(db_pool: web::Data<Pool>) -> impl Responder {
     }
 }
 
-pub async fn get_items(db_pool: web::Data<Pool>, path: web::Path<(i32, )>) -> impl Responder {
+pub async fn get_items(db_pool: web::Data<Pool>, path: web::Path<(i32, i32)>) -> impl Responder {
 
     let client: Client = db_pool.get().await.expect("Error connecting to the database");
 
-    let result = db::get_items(&client, path.0).await;
+    let result = db::get_items(&client, 1).await;
 
     match result {
         Ok(items) => HttpResponse::Ok().json(items),
