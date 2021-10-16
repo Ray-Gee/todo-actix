@@ -5,7 +5,7 @@ use std::fmt;
 #[derive(Debug)]
 pub enum AppErrorType {
     DbError,
-    NotFoundError
+    NotFoundError,
 }
 
 #[derive(Debug)]
@@ -19,7 +19,7 @@ impl AppError {
     pub fn message(&self) -> String {
         match &*self {
             AppError{ message: Some(message), cause: _, error_type: _ } => message.clone(),
-            AppError{ message: None, cause: _, error_type: AppErrorType::DbError } => "The requested item was not found".to_string(),
+            AppError{ message: None, cause: _, error_type: AppErrorType::NotFoundError } => "The requested item was not found".to_string(),
             _ => "An unexpected error has occurred".to_string(),
         }
     }

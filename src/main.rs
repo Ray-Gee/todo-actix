@@ -4,8 +4,8 @@ mod handlers;
 mod db;
 mod errors;
 
-use crate::models::Status;
-use actix_web::{web, App, HttpServer, Responder};
+use crate::models::{AppState};
+use actix_web::{web, App, HttpServer};
 use std::io;
 use dotenv::dotenv;
 use tokio_postgres::NoTls;
@@ -21,10 +21,10 @@ fn configure_log() -> Logger {
     slog::Logger::root(console_drain, o!("v" => env!("CARGO_PKG_VERSION")))
 }
 
-async fn status() -> impl Responder {
-    web::HttpResponse::Ok()
-        .json(Status { status: "UP".to_string()})
-}
+// async fn status() -> impl Responder {
+//     web::HttpResponse::Ok()
+//         .json(Status { status: "UP".to_string()})
+// }
 
 #[actix_rt::main]
 async fn main() -> io::Result<()> {
@@ -40,7 +40,11 @@ async fn main() -> io::Result<()> {
     info!(log, "Starting server at http://{}:{}/", config.server.host, config.server.port);
     
     HttpServer::new(move|| {
-        App::new().data(pool.clone())
+        App::new()
+            .data(AppState { 
+                pool: pool.clone(),
+                log: log.clone(),
+            })
             .route("/", web::get().to(status))
             .route("/todos{_:/?}", web::get().to(get_todos))
             .route("/todos{_:/?}", web::post().to(create_todo))
