@@ -27,6 +27,12 @@ slog = "2.5.2"
 slog-term = "2.5.0"
 slog-async = "2.4.0"
 slog-envlogger = "2.2.0"
+eyre = "0.4"
+color-eyre = "0.3"
+tracing = "0.1"
+tracing-futures = "0.2"
+tracing-log = { version = "0.1", features = ["env_logger"]}
+tracing-subscriber = "0.2"
 
 [dev-dependencies]
 lazy_static = "1.4.0"
